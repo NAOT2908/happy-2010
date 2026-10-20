@@ -452,6 +452,7 @@
                 <a href="#gift-boxes" class="hover:text-rose-600 transition flex items-center gap-1"><i class="fa-solid fa-gift text-xs"></i> Hộp Quà Bí Mật</a>
                 <a href="#photo-wall" class="hover:text-rose-600 transition flex items-center gap-1"><i class="fa-solid fa-camera-retro text-xs"></i> Bức Tường Kỷ Niệm</a>
                 <a href="#blind-box" class="hover:text-rose-600 transition flex items-center gap-1"><i class="fa-solid fa-dice-d20 text-xs"></i> Túi Mù Đặc Quyền</a>
+                <a href="#wish-wall" class="hover:text-rose-600 transition flex items-center gap-1"><i class="fa-solid fa-pen-nib text-xs"></i> Lưu Bút Lời Chúc</a>
             </nav>
             <div class="flex items-center gap-2">
                 <!-- Nút Xem Lại Thiệp Mở Đầu -->
@@ -638,6 +639,105 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GÓC LƯU BÚT LỜI CHÚC YÊU THƯƠNG (WISH WALL / GUESTBOOK) -->
+        <section id="wish-wall" class="scroll-mt-24">
+            <div class="glass-card-darker rounded-3xl p-6 sm:p-10 border-2 border-white shadow-2xl relative overflow-hidden bg-gradient-to-br from-white/95 via-pink-50/80 to-purple-50/80">
+                <!-- Decorative blurred background blobs -->
+                <div class="absolute -top-10 -right-10 w-44 h-44 bg-pink-200/40 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-purple-200/40 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Section Header -->
+                <div class="text-center max-w-xl mx-auto mb-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-gold/15 text-rose-gold-dark font-semibold text-xs tracking-wider uppercase mb-3">
+                        <i class="fa-solid fa-pen-fancy"></i> Lưu Bút Yêu Thương 20/10
+                    </div>
+                    <h2 class="font-playfair text-3xl md:text-4xl font-bold text-slate-800">
+                        Gửi Lời Chúc <span class="text-gradient-rose font-dancing text-4xl md:text-5xl">Từ Trái Tim</span>
+                    </h2>
+                    <p class="text-slate-600 mt-2 text-sm sm:text-base">
+                        Để lại những lời chúc ngọt ngào, lời nhắn nhủ vui tươi và chân thành nhất gửi đến toàn thể chị em phụ nữ nhân ngày 20/10!
+                    </p>
+                </div>
+
+                <!-- Form Gửi Lời Chúc Mới -->
+                <div class="max-w-2xl mx-auto glass-card rounded-2xl p-5 sm:p-7 border border-rose-200/90 shadow-lg mb-12">
+                    <form id="add-wish-form" onsubmit="handleSendGuestWish(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Người Gửi (Từ ai) -->
+                            <div>
+                                <label for="wish-author" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user-pen text-rose-500"></i> Lời chúc từ ai?
+                                </label>
+                                <input type="text" id="wish-author" required placeholder="VD: Anh Em Kỹ Thuật, Toàn Nguyễn, Đồng nghiệp giấu tên..."
+                                       class="w-full bg-white/90 border border-rose-200 rounded-xl px-3.5 py-2.5 text-sm font-medium outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200 transition text-slate-800">
+                            </div>
+
+                            <!-- Nhãn Biểu Cảm (Icon) -->
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-heart text-rose-500"></i> Chọn biểu tượng
+                                </label>
+                                <div class="grid grid-cols-5 gap-1.5">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="wish-icon" value="💐" checked class="peer hidden">
+                                        <div class="p-2 rounded-xl border border-rose-200 peer-checked:border-rose-500 peer-checked:bg-rose-100 text-center text-lg transition">💐</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="wish-icon" value="💖" class="peer hidden">
+                                        <div class="p-2 rounded-xl border border-rose-200 peer-checked:border-rose-500 peer-checked:bg-rose-100 text-center text-lg transition">💖</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="wish-icon" value="👑" class="peer hidden">
+                                        <div class="p-2 rounded-xl border border-rose-200 peer-checked:border-rose-500 peer-checked:bg-rose-100 text-center text-lg transition">👑</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="wish-icon" value="🧋" class="peer hidden">
+                                        <div class="p-2 rounded-xl border border-rose-200 peer-checked:border-rose-500 peer-checked:bg-rose-100 text-center text-lg transition">🧋</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="wish-icon" value="🌸" class="peer hidden">
+                                        <div class="p-2 rounded-xl border border-rose-200 peer-checked:border-rose-500 peer-checked:bg-rose-100 text-center text-lg transition">🌸</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nội Dung Lời Chúc -->
+                        <div>
+                            <label for="wish-message" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-comment-dots text-rose-500"></i> Nội dung lời chúc 20/10
+                            </label>
+                            <textarea id="wish-message" rows="3" required placeholder="Nhập những lời chúc tốt đẹp, ấm áp hoặc dí dỏm nhất gửi tặng các chị em..."
+                                      class="w-full bg-white/90 border border-rose-200 rounded-xl p-3 text-sm font-medium outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-200 transition text-slate-800"></textarea>
+                        </div>
+
+                        <!-- Nút Gửi Lời Chúc -->
+                        <div class="flex justify-end pt-1">
+                            <button type="submit" class="px-7 py-3 rounded-xl bg-gradient-to-r from-rose-gold via-pink-500 to-rose-gold-dark text-white font-bold text-sm shadow-md hover:shadow-rose-400/40 hover:scale-105 active:scale-95 transition flex items-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Gửi Lời Chúc Ngay
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Danh Sách Các Lời Chúc Đã Đăng (Grid Thiệp Pastel) -->
+                <div>
+                    <div class="flex items-center justify-between mb-6 pb-2 border-b border-rose-200/80">
+                        <h3 class="font-playfair text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <span>Bức Tường Lời Chúc</span>
+                            <span id="wish-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-gold-dark font-bold font-quicksand">0 lời chúc</span>
+                        </h3>
+                        <span class="text-xs text-slate-400 font-medium">Được cập nhật tức thì ✨</span>
+                    </div>
+
+                    <!-- Container Grid Các Tấm Thiệp -->
+                    <div id="wishes-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <!-- Loaded dynamically via JS -->
                     </div>
                 </div>
             </div>
@@ -1793,11 +1893,164 @@
         }
 
         /* ----------------------------------------------------
+         * 15. GUESTBOOK / WISH WALL HANDLERS
+         * ---------------------------------------------------- */
+        const DEFAULT_GUEST_WISHES = [
+            {
+                id: 'wish-1',
+                author: 'Toàn bộ Anh Em Công Ty',
+                icon: '💐',
+                message: 'Chúc các chị em 20/10 luôn xinh đẹp rạng rỡ, trẻ trung yêu đời, công việc thăng hoa, ví tiền rủng rỉnh và luôn là nguồn cảm hứng tuyệt vời của cả văn phòng!',
+                time: '20/10/2026',
+                likes: 24
+            },
+            {
+                id: 'wish-2',
+                author: 'Team Kỹ Thuật & IT',
+                icon: '👑',
+                message: 'Chúc các chị em 20/10 không bug, không deadline dí, code đời chạy êm ru, sếp cưng như trứng và ngày nào cũng được bao trà sữa full topping!',
+                time: '20/10/2026',
+                likes: 19
+            },
+            {
+                id: 'wish-3',
+                author: 'Hội Đồng Nghiệp Nam',
+                icon: '🧋',
+                message: 'Hôm nay là ngày của các chị em, chỉ việc cười tươi và nhận quà thôi nhé! Mọi việc nặng việc nhẹ từ nay có anh em lo trọn gói!',
+                time: '20/10/2026',
+                likes: 16
+            },
+            {
+                id: 'wish-4',
+                author: 'Một Đồng Nghiệp Giấu Tên',
+                icon: '💖',
+                message: 'Cảm ơn sự dịu dàng và nụ cười rạng rỡ của các chị em mỗi ngày đi làm. Chúc mọi người luôn hạnh phúc viên mãn, an yên và yêu đời!',
+                time: '20/10/2026',
+                likes: 15
+            }
+        ];
+
+        function getGuestWishes() {
+            const stored = localStorage.getItem('women_day_guestbook_wishes');
+            if (stored) {
+                try { return JSON.parse(stored); } catch (e) { return DEFAULT_GUEST_WISHES; }
+            }
+            return DEFAULT_GUEST_WISHES;
+        }
+
+        function saveGuestWishes(wishes) {
+            localStorage.setItem('women_day_guestbook_wishes', JSON.stringify(wishes));
+        }
+
+        function renderGuestWishes() {
+            const container = document.getElementById('wishes-grid');
+            const badge = document.getElementById('wish-count-badge');
+            if (!container) return;
+
+            const wishes = getGuestWishes();
+            if (badge) badge.textContent = `${wishes.length} lời chúc`;
+            container.innerHTML = '';
+
+            wishes.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-4 sm:p-5 border border-rose-200/90 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative overflow-hidden group';
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Header with Icon & Author -->
+                        <div class="flex items-center justify-between mb-3 pb-2 border-b border-rose-100">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-full bg-rose-100 text-rose-gold-dark flex items-center justify-center text-lg flex-shrink-0 shadow-inner">
+                                    ${item.icon || '🌸'}
+                                </div>
+                                <div class="text-left">
+                                    <h4 class="font-bold text-slate-800 text-xs sm:text-sm line-clamp-1">${item.author}</h4>
+                                    <span class="text-[10px] text-slate-400 font-medium">${item.time || 'Hôm nay'}</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200/60">
+                                💌 20/10
+                            </span>
+                        </div>
+
+                        <!-- Wish Content -->
+                        <p class="text-slate-700 text-xs sm:text-sm font-medium leading-relaxed italic text-left mb-4">
+                            "${item.message}"
+                        </p>
+                    </div>
+
+                    <!-- Footer of Card: Like button & From Tag -->
+                    <div class="flex items-center justify-between pt-2 border-t border-rose-100 text-xs">
+                        <span class="text-[11px] font-bold text-rose-gold-dark">
+                            Gửi từ: <span class="font-semibold text-rose-600">${item.author}</span> ✨
+                        </span>
+                        <button onclick="likeGuestWish('${item.id}', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition text-[11px] active:scale-90">
+                            <i class="fa-solid fa-heart text-rose-500"></i>
+                            <span class="like-num">${item.likes || 0}</span>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleSendGuestWish(e) {
+            e.preventDefault();
+            const author = document.getElementById('wish-author').value.trim();
+            const message = document.getElementById('wish-message').value.trim();
+            const iconEl = document.querySelector('input[name="wish-icon"]:checked');
+            const icon = iconEl ? iconEl.value : '💐';
+
+            if (!author || !message) return;
+
+            const newWish = {
+                id: 'wish-' + Date.now(),
+                author: author,
+                icon: icon,
+                message: message,
+                time: 'Vừa xong',
+                likes: 1
+            };
+
+            const wishes = getGuestWishes();
+            wishes.unshift(newWish);
+            saveGuestWishes(wishes);
+            renderGuestWishes();
+
+            // Reset form
+            document.getElementById('add-wish-form').reset();
+
+            // Sound & Confetti
+            initAudioCtx();
+            playChimeSound();
+            triggerConfettiBurst();
+
+            showToast(`Cảm ơn ${author} đã gửi lời chúc 20/10 lên bức tường! 💌`, '💖');
+
+            // Scroll to the new wish
+            document.getElementById('wishes-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function likeGuestWish(id, btn) {
+            const wishes = getGuestWishes();
+            const wish = wishes.find(w => w.id === id);
+            if (wish) {
+                wish.likes = (wish.likes || 0) + 1;
+                saveGuestWishes(wishes);
+                const numEl = btn.querySelector('.like-num');
+                if (numEl) numEl.textContent = wish.likes;
+                btn.classList.add('scale-125');
+                setTimeout(() => btn.classList.remove('scale-125'), 200);
+            }
+        }
+
+        /* ----------------------------------------------------
          * INITIALIZATION
          * ---------------------------------------------------- */
         document.addEventListener('DOMContentLoaded', () => {
             renderGiftBoxes();
             renderPolaroidWall();
+            renderGuestWishes();
         });
     </script>
 </body>
