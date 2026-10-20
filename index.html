@@ -66,6 +66,10 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+    <!-- Firebase SDK (Realtime Database for Live Online Wishes) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         /* Custom Styles & Glassmorphism */
         body {
@@ -1893,8 +1897,25 @@
         }
 
         /* ----------------------------------------------------
-         * 15. GUESTBOOK / WISH WALL HANDLERS
+         * 15. GUESTBOOK / WISH WALL HANDLERS (ONLINE REALTIME SYNC)
          * ---------------------------------------------------- */
+        // CẤU HÌNH FIREBASE REALTIME DATABASE (ĐỒNG BỘ ONLINE TOÀN BỘ MỌI NGƯỜI)
+        // Dán thông tin Firebase của bạn vào đây:
+        const firebaseConfig = {
+            apiKey: "AIzaSyB1DGq3442QhTbHJK-pBc8Ms43fF7hgDnk",
+            authDomain: "happy-2010.firebaseapp.com",
+            databaseURL: "https://happy-2010-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "happy-2010",
+            storageBucket: "happy-2010.firebasestorage.app",
+            messagingSenderId: "750503942737",
+            appId: "1:750503942737:web:b7e199328ece51db3ab670",
+            measurementId: "G-HL6TZV29ZL"
+        };
+
+        let isFirebaseActive = false;
+        let wishesDbRef = null;
+        let currentGuestWishes = [];
+
         const DEFAULT_GUEST_WISHES = [
             {
                 id: 'wish-1',
@@ -1930,7 +1951,62 @@
             }
         ];
 
-        function getGuestWishes() {
+        function initFirebaseGuestbook() {
+            try {
+                if (typeof firebase !== 'undefined' && firebaseConfig.apiKey && firebaseConfig.databaseURL) {
+                    firebase.initializeApp(firebaseConfig);
+                    wishesDbRef = firebase.database().ref('wishes_2010');
+                    isFirebaseActive = true;
+
+                    // Lắng nghe realtime trực tiếp từ Firebase
+                    let isFirstLoad = true;
+                    wishesDbRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const list = Object.keys(data).map(key => ({
+                                id: key,
+                                ...data[key]
+                            })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                            currentGuestWishes = list;
+                        } else {
+                            // Chưa có dữ liệu online thì đẩy các lời chúc mặc định lên
+                            DEFAULT_GUEST_WISHES.forEach(w => {
+                                wishesDbRef.child(w.id).set({
+                                    ...w,
+                                    timestamp: Date.now() - 3600000
+                                });
+                            });
+                            currentGuestWishes = DEFAULT_GUEST_WISHES;
+                        }
+                        renderGuestWishes();
+
+                        // Nếu không phải lần tải đầu tiên (tức là có ai đó vừa gửi lời chúc mới)
+                        if (!isFirstLoad) {
+                            triggerConfettiBurst();
+                            initAudioCtx();
+                            playChimeSound();
+                            showToast('Có lời chúc mới vừa được gửi lên bức tường! 💌✨', '🌸');
+                        }
+                        isFirstLoad = false;
+                    }, (err) => {
+                        console.warn("Lỗi phân quyền Firebase (Cần bật test mode trong Rules):", err);
+                        isFirebaseActive = false;
+                        currentGuestWishes = getLocalGuestWishes();
+                        renderGuestWishes();
+                    });
+                    return;
+                }
+            } catch (err) {
+                console.warn("Chưa cấu hình Firebase hoặc lỗi khởi tạo, chuyển sang chế độ lưu cục bộ:", err);
+            }
+
+            // Fallback sang localStorage nếu chưa dán cấu hình Firebase
+            isFirebaseActive = false;
+            currentGuestWishes = getLocalGuestWishes();
+            renderGuestWishes();
+        }
+
+        function getLocalGuestWishes() {
             const stored = localStorage.getItem('women_day_guestbook_wishes');
             if (stored) {
                 try { return JSON.parse(stored); } catch (e) { return DEFAULT_GUEST_WISHES; }
@@ -1938,7 +2014,7 @@
             return DEFAULT_GUEST_WISHES;
         }
 
-        function saveGuestWishes(wishes) {
+        function saveLocalGuestWishes(wishes) {
             localStorage.setItem('women_day_guestbook_wishes', JSON.stringify(wishes));
         }
 
@@ -1947,7 +2023,7 @@
             const badge = document.getElementById('wish-count-badge');
             if (!container) return;
 
-            const wishes = getGuestWishes();
+            const wishes = currentGuestWishes.length > 0 ? currentGuestWishes : DEFAULT_GUEST_WISHES;
             if (badge) badge.textContent = `${wishes.length} lời chúc`;
             container.innerHTML = '';
 
@@ -2003,19 +2079,28 @@
 
             if (!author || !message) return;
 
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getDate()}/${now.getMonth() + 1}`;
+
             const newWish = {
-                id: 'wish-' + Date.now(),
                 author: author,
                 icon: icon,
                 message: message,
-                time: 'Vừa xong',
+                time: timeStr,
+                timestamp: Date.now(),
                 likes: 1
             };
 
-            const wishes = getGuestWishes();
-            wishes.unshift(newWish);
-            saveGuestWishes(wishes);
-            renderGuestWishes();
+            if (isFirebaseActive && wishesDbRef) {
+                // Đẩy trực tiếp lên Firebase Realtime Database
+                wishesDbRef.push(newWish);
+            } else {
+                // Chế độ lưu tạm trên máy hiện tại
+                const localWish = { id: 'wish-' + Date.now(), ...newWish };
+                currentGuestWishes.unshift(localWish);
+                saveLocalGuestWishes(currentGuestWishes);
+                renderGuestWishes();
+            }
 
             // Reset form
             document.getElementById('add-wish-form').reset();
@@ -2032,16 +2117,19 @@
         }
 
         function likeGuestWish(id, btn) {
-            const wishes = getGuestWishes();
-            const wish = wishes.find(w => w.id === id);
-            if (wish) {
-                wish.likes = (wish.likes || 0) + 1;
-                saveGuestWishes(wishes);
-                const numEl = btn.querySelector('.like-num');
-                if (numEl) numEl.textContent = wish.likes;
-                btn.classList.add('scale-125');
-                setTimeout(() => btn.classList.remove('scale-125'), 200);
+            if (isFirebaseActive && wishesDbRef) {
+                wishesDbRef.child(id).child('likes').transaction((likes) => (likes || 0) + 1);
+            } else {
+                const wish = currentGuestWishes.find(w => w.id === id);
+                if (wish) {
+                    wish.likes = (wish.likes || 0) + 1;
+                    saveLocalGuestWishes(currentGuestWishes);
+                    const numEl = btn.querySelector('.like-num');
+                    if (numEl) numEl.textContent = wish.likes;
+                }
             }
+            btn.classList.add('scale-125');
+            setTimeout(() => btn.classList.remove('scale-125'), 200);
         }
 
         /* ----------------------------------------------------
@@ -2050,7 +2138,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderGiftBoxes();
             renderPolaroidWall();
-            renderGuestWishes();
+            initFirebaseGuestbook();
         });
     </script>
 </body>
